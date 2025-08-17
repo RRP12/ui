@@ -157,6 +157,9 @@ Here are some examples of correct usage of artifacts:
             "name": "mcp-hello-server",
             "version": "1.0.0",
             "type": "module",
+            "scripts": {
+              "start": "node index.js"
+            },
             "dependencies": {
               "@modelcontextprotocol/sdk": "latest"
             }
@@ -166,36 +169,47 @@ Here are some examples of correct usage of artifacts:
           npm install
         </boltAction>
         <boltAction type="file" filePath="index.js">
-          import { McpServer, StdioServerTransport } from '@modelcontextprotocol/sdk/server';
+      import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
 
-          const server = new McpServer({
-            name: 'hello-server',
-            version: '1.0.0',
-          });
+// Create an MCP server
+const server = new McpServer({
+  name: "demo-server",
+  version: "1.0.0"
+});
 
-          server.tool(
-            'hello',
-            'A simple tool that returns a greeting.',
-            {
-              name: {
-                type: 'string',
-                description: 'The name to include in the greeting.',
-              },
-            },
-            async ({ name }) => {
-              return {
-                content: [
-                  {
-                    type: 'text',
-                    text: "Hello, " + name + "!",
-                  },
-                ],
-              };
-            },
-          );
+// Add an addition tool
+server.registerTool("add",
+  {
+    title: "Addition Tool",
+    description: "Add two numbers",
+    inputSchema: { a: z.number(), b: z.number() }
+  },
+  async ({ a, b }) => ({
+    content: [{ type: "text", text: String(a + b) }]
+  })
+);
 
-          const transport = new StdioServerTransport();
-          server.connect(transport);
+// Add a dynamic greeting resource
+server.registerResource(
+  "greeting",
+  new ResourceTemplate("greeting://{name}", { list: undefined }),
+  { 
+    title: "Greeting Resource",      // Display name for UI
+    description: "Dynamic greeting generator"
+  },
+  async (uri, { name }) => ({
+    contents: [{
+      uri: uri.href,
+      text: "Hello, ${name}!"
+    }]
+  })
+);
+
+// Start receiving messages on stdin and sending messages on stdout
+const transport = new StdioServerTransport();
+await server.connect(transport);
         </boltAction>
 
         <boltAction type="shell">

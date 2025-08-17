@@ -61,11 +61,16 @@ function FileNodeItem({ node, depth, onChange, onOpenFile, activeFileId, root })
 
   const onAddFile = useCallback(() => {
     const child = {
-      id: `${node.id}-${Date.now()}`,
-      name: "new-file.ts",
       type: "file",
-      language: "typescript",
-      content: "// New file",
+
+      file: {
+        file: {
+          id: `${node.id}-${Date.now()}`,
+          name: "new-file.ts",
+          language: "typescript",
+          content: "// New file"
+        }
+      }
     }
     const next = addChild(root, node.id, child)
     onChange(next)
@@ -118,7 +123,7 @@ function FileNodeItem({ node, depth, onChange, onOpenFile, activeFileId, root })
         ) : (
           <button
             onDoubleClick={() => {
-              if (node.type === "file") onOpenFile(node)
+              if (node.type === "file") onOpenFile(node.file)
               if (node.type === "folder") setOpen((o) => !o)
             }}
             onClick={() => node.type === "file" && onOpenFile(node)}
@@ -153,7 +158,6 @@ function FileNodeItem({ node, depth, onChange, onOpenFile, activeFileId, root })
           </DropdownMenu>
         </div>
       </div>
-
       {node.type === "folder" && open && node.children?.length ? (
         <div className="mt-1">
           {node.children.map((child) => (
@@ -170,7 +174,7 @@ function FileNodeItem({ node, depth, onChange, onOpenFile, activeFileId, root })
         </div>
       ) : null}
     </div>
-  )
+  );
 }
 
 const MemoFileNodeItem = React.memo(FileNodeItem, (prev, next) => {
