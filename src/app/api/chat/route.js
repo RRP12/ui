@@ -1,3 +1,4 @@
+
 import { createMistral } from '@ai-sdk/mistral';
 import { generateText } from 'ai';
 import { SYSTEM_PROMPT } from '@/constants/systemPrompt';
@@ -12,13 +13,22 @@ const mistral = createMistral({
 export const maxDuration = 30;
 
 export async function POST(req) {
-    const { messages } = await req.json();
+    const { messages, currentFiles, question } = await req.json();
 
     const result = streamText({
         model: mistral('codestral-latest'),
-        system: 'You are a helpful assistant.',
-        messages: convertToModelMessages(messages),
+        system: SYSTEM_PROMPT,
+        // messages: convertToModelMessages(messages),
+
+        prompt: ` you are a helpful coding agnet assistant with access to ${JSON.stringify(currentFiles)} 
+        
+        question : ${question}
+        `,
+
+
     });
+
+    console.log("currentFiles", currentFiles)
 
     return result.toUIMessageStreamResponse();
 }

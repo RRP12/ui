@@ -1,5 +1,11 @@
 {
     "compilerOptions": {
+        "baseUrl": ".", // This sets the base directory for absolute imports to the project root
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        },
         "target": "esnext",
         "module": "esnext",
         "jsx": "preserve",
@@ -17,18 +23,12 @@
         ],
         "allowJs": true,
         "incremental": true,
-        "moduleResolution": "nodenext",
+        "moduleResolution": "node",
         "plugins": [
             {
                 "name": "next"
             }
-        ],
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "./src/*"
-            ]
-        }
+        ]
     },
     "include": [
         "**/*.js",
@@ -40,5 +40,5 @@
     ],
     "exclude": [
         "node_modules"
-    ]
+    ],
 }

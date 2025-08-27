@@ -4,7 +4,7 @@ const filesContext = createContext("system");
 import { WebContainer } from "@webcontainer/api";
 export const useGetFiles = () => useContext(filesContext);
 
-export default function ContextProvider({children}) {
+export default function ContextProvider({ children }) {
   const [files, setFiles] = useState();
   const [webcontainerInstance, setWebcontainerInstance] = useState();
 
@@ -16,7 +16,7 @@ export default function ContextProvider({children}) {
   }
   return (
 
-    <filesContext.Provider  value={context}>
+    <filesContext.Provider value={context}>
       {children}
     </filesContext.Provider>
   )

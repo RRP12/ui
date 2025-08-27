@@ -1,5 +1,15 @@
 // next.config.js
+// const nextConfig = {
+
+
+
+// };
+
+// export default nextConfig;
+
 const nextConfig = {
+  reactStrictMode: true,
+
   pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
   experimental: {
     // Enable server actions
@@ -8,8 +18,12 @@ const nextConfig = {
   // List of packages that should be bundled for server components
   serverExternalPackages: ['@langchain/langgraph'],
 
+
   // Configure webpack to handle Node.js built-in modules
   webpack: (config, { isServer }) => {
+    // Configure path aliases
+
+
     // Client-side only configurations
     if (!isServer) {
       config.resolve.fallback = {
@@ -68,7 +82,6 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  reactStrictMode: false
-};
+}
 
-export default nextConfig;
+module.exports = nextConfig

@@ -732,6 +732,7 @@ import FileExplorer from "./FileExplorer"
 import { getSystemPrompt } from "../constants/systemPrompt"
 import InsideChat from "./insideChat"
 
+
 let initialPrompt = `When developing MCP servers with JavaScript, ensure the architecture is robust, maintainable, and follows best practices.The implementation should be production - ready with proper error handling and clean separation of concerns.
 
 Key requirements:
@@ -760,10 +761,23 @@ export default function Editor() {
   const searchParams = useSearchParams()
   const [selectedFile, setSelectedFile] = useState(null)
   const [serverUrl, setServerUrl] = useState(null) // New state for server URL
+  const setupDone = useRef(false)
 
+  const [mountedFiles, setMountedFiles] = useState([])
+
+
+  useEffect(() => {
+    console.log("Mounted files in Editor:");
+  }, []);
+
+  useEffect(() => {
+
+  }, [mountedFiles]);
   const handleSelectFile = (file) => {
     setSelectedFile(file)
   }
+
+
 
   console.log("selectedFile", selectedFile)
 
@@ -896,7 +910,7 @@ export default function Editor() {
     await startShell(terminal)
 
     await wcRef.current.mount(files)
-    console.log("mounted files", files)
+
 
     const installProcess = await wcRef.current.spawn("npm", ["install"], {
       cwd: "/",
@@ -938,16 +952,30 @@ export default function Editor() {
     })
   }
 
+  // useEffect(() => {
+  //   if (!steps) return
+
+
+  //   const webContainerFiles = buildFileTreeFromSteps(steps)
+  //   setMountedFiles(steps) // Store the original files array
+  //   initWebContainer(webContainerFiles)
+  // }, [steps])
+
   useEffect(() => {
     if (!steps) return
-    console.log("wcRef.current", wcRef.current)
+    if (setupDone.current) return   // ← NEW
+    setupDone.current = true        // ← NEW
 
     const webContainerFiles = buildFileTreeFromSteps(steps)
+    setMountedFiles(steps)
     initWebContainer(webContainerFiles)
   }, [steps])
 
+
   return (
     <div className="flex h-screen">
+
+
       {/* Left: File Explorer */}
       <div style={{ display: "flex", flexDirection: "column" }} className="w-[50%] h-full border-r border-white-200 overflow-y-auto bg-gray-50">
         <div>
@@ -961,7 +989,7 @@ export default function Editor() {
 
 
         <div style={{ flex: 1, border: "1px solid red", color: "cadetblue" }}>
-          <InsideChat />
+          <InsideChat mountedFiles={mountedFiles} />
         </div>
 
       </div>
