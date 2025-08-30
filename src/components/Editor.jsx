@@ -2,7 +2,6 @@
 "use client"
 
 import React, { Suspense, useEffect, useRef, useState } from "react"
-import { WebContainer } from "@webcontainer/api"
 import { Terminal } from "@xterm/xterm"
 import "@xterm/xterm/css/xterm.css"
 import { Resizable } from "re-resizable"
@@ -12,10 +11,17 @@ import CodeMarkDown from "./code"
 import { executeActions, parseBoltXml } from "@/utils/parse"
 import { useSearchParams } from "next/navigation"
 import { FitAddon } from "@xterm/addon-fit"
-// import { getSystemPrompt } from "@/utils/getSystemPrompt"
 import FileExplorer from "./FileExplorer"
 // import { getSystemPrompt } from "../constants/systemPrompt"
 import InsideChat from "./insideChat"
+
+// WebContainer will be dynamically imported on the client side
+let WebContainer;
+if (typeof window !== 'undefined') {
+  import('@webcontainer/api').then(module => {
+    WebContainer = module.WebContainer;
+  });
+}
 
 
 

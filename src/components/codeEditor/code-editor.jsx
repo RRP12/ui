@@ -22,10 +22,31 @@ export default function CodeEditor({
 }) {
   const ref = useRef(null)
 
-  const isDark = useMemo(() => {
-    if (typeof document === "undefined") return false
-    return document.documentElement.classList.contains("dark")
-  }, [])
+  const [isDark, setIsDark] = useState(false);
+
+  // Handle dark mode detection on client side only
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    // Initial check
+    setIsDark(document.documentElement.classList.contains("dark"));
+
+    // Set up observer for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          setIsDark(document.documentElement.classList.contains("dark"));
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const extensions = useMemo(() => {
     switch ((language || "").toLowerCase()) {
@@ -73,24 +94,19 @@ export default function CodeEditor({
     onReady?.(api)
   }, [onReady, onChange])
 
-  // Keep theme in sync with DOM class changes (light/dark)
+  // Handle theme changes
   useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const d = document.documentElement.classList.contains("dark")
-      // Reconfigure theme by resetting state facet
-      const view = ref.current?.view
-      if (!view) return
-      view.dispatch({
-        effects: EditorView.reconfigure.of([
-          d ? oneDark : [],
-          ...extensions,
-          EditorView.lineWrapping,
-        ]),
-      })
-    })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
-    return () => observer.disconnect()
-  }, [extensions])
+    const view = ref.current?.view;
+    if (!view) return;
+
+    view.dispatch({
+      effects: EditorView.reconfigure.of([
+        isDark ? oneDark : [],
+        ...extensions,
+        EditorView.lineWrapping,
+      ]),
+    });
+  }, [isDark, extensions]);
 
   return (
     <CodeMirror
