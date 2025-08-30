@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node_modules/.bin/ts-node src/index.ts",
+    "start": "next start",
     "lint": "next lint"
   },
+  "packageManager": "pnpm@8.15.5",
   "dependencies": {
     "@ai-sdk/langchain": "^1.0.15",
     "@ai-sdk/mistral": "^2.0.5",
