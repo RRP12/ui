@@ -136,10 +136,7 @@ export default function FileExplorer({ files = [],
       className={`w-96 bg-white rounded-lg border border-gray-200 flex flex-col h-full ${className}`}
       style={{ minHeight: 0 }} // allows flex children to shrink properly
     >
-      {/* Header */}
-      <div className=" w-full px-4 py-3 border-b border-gray-200 bg-gray-50 shrink-0">
-        <h2 className="text-sm font-semibold text-gray-700">EXPLORER</h2>
-      </div>
+
 
       {/* Scrollable content */}
       <div className=" w-full flex-1 overflow-y-auto p-2 space-y-0.5">
